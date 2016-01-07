@@ -157,45 +157,56 @@ function getAverage(price_list) {
 }
 
 Parse.Cloud.define("processPurchases", function(request, response) {
-  var account_id = request.params.account_id;
 
-  var apiUrl = 'http://api.reimaginebanking.com/accounts/' + account_id + "/purchases";
-  Parse.Cloud.httpRequest({
-    url: apiUrl,
-    params: {
-      key : nessieKey
-    },
-    success: function(httpResponse) {
-      var transactions = httpResponse.data;
-      var transactionDict = {};
-      var transactionPrices = {};
-      for (var i = 0; i < transactions.length; i++) {
-        var description = transactions[i].description;
-        if (description in transactionDict) {
-          transactionDict[description] += 1;
-          transactionPrices[description].push(transactions[i].amount);
-        }
-        else {
-          transactionDict[description] = 1;
-          transactionPrices[description] = [transactions[i].amount];
-        }
-      };
-      
 
-      keysSorted = Object.keys(transactionDict).sort(function(a,b){return transactionDict[b]-transactionDict[a]});
-      console.log(transactionDict);
-      topThree = {};
-      for (var i = 0; i < Math.min(3, Object.keys(transactionDict).length); i++) {
-        console.log(keysSorted[i]);
-        topThree[keysSorted[i]] = getAverage(transactionPrices[keysSorted[i]]);
-        console.log("top three" + i + ": " + topThree);      
-      }
-      response.success(topThree);
+  var query = new Parse.Query("User");
+  query.equalTo("objectId", request.params.object_id);
+  query.find({
+    success: function(results) {
+      var account_id = results[0].get("account_id");
+
+      var apiUrl = 'http://api.reimaginebanking.com/accounts/' + account_id + "/purchases";
+      Parse.Cloud.httpRequest({
+        url: apiUrl,
+        params: {
+          key : nessieKey
+        },
+        success: function(httpResponse) {
+          var transactions = httpResponse.data;
+          var transactionDict = {};
+          var transactionPrices = {};
+          for (var i = 0; i < transactions.length; i++) {
+            var description = transactions[i].description;
+            if (description in transactionDict) {
+              transactionDict[description] += 1;
+              transactionPrices[description].push(transactions[i].amount);
+            }
+            else {
+              transactionDict[description] = 1;
+              transactionPrices[description] = [transactions[i].amount];
+            }
+          };
+          
+
+          keysSorted = Object.keys(transactionDict).sort(function(a,b){return transactionDict[b]-transactionDict[a]});
+          console.log(transactionDict);
+          topThree = {};
+          for (var i = 0; i < Math.min(3, Object.keys(transactionDict).length); i++) {
+            console.log(keysSorted[i]);
+            topThree[keysSorted[i]] = getAverage(transactionPrices[keysSorted[i]]);
+            console.log("top three" + i + ": " + topThree);      
+          }
+          response.success(topThree);
+        },
+        error: function(httpResponse) {
+          // error
+          console.error('Request failed with response code ' + httpResponse.status);
+          response.error(status);
+        }
+      });
     },
-    error: function(httpResponse) {
-      // error
-      console.error('Request failed with response code ' + httpResponse.status);
-      response.error(status);
+    error: function() {
+      response.error("Account lookup failed");
     }
   });
 
