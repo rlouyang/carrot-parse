@@ -124,7 +124,6 @@ function getAverage(price_list) {
     total += price_list[i];
   }
   var avg = total / price_list.length;
-  console.log(avg);
   return avg;
 }
 
@@ -155,11 +154,11 @@ Parse.Cloud.define("processPurchases", function(request, response) {
       
 
       keysSorted = Object.keys(transactionDict).sort(function(a,b){return transactionDict[b]-transactionDict[a]});
-
+      console.log(transactionDict);
       topThree = {};
-      for (var i = 0; i < Math.min(3, transactionDict.length); i++) {
+      for (var i = 0; i < Math.min(3, Object.keys(transactionDict).length); i++) {
         console.log(keysSorted[i]);
-        topThree[transactionDict[keysSorted[i]]] = getAverage(transactionPrices[keysSorted[i]]);
+        topThree[keysSorted[i]] = getAverage(transactionPrices[keysSorted[i]]);
         console.log("top three" + i + ": " + topThree);      
       }
       response.success(topThree);
