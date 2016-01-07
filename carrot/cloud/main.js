@@ -134,8 +134,6 @@ Parse.Cloud.define("getMostRecentSpareChange", function(request, response) {
   
 });
 
-
-
 Parse.Cloud.define("processPurchases", function(request, response) {
 
   var query = new Parse.Query("User");
