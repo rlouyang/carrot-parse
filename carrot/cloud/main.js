@@ -5,7 +5,7 @@ var nessieKey = '93da98350c71eb1daca8329c990c50e0';
 
 // Use Parse.Cloud.define to define as many cloud functions as you want.
 // For example:
-
+/*
 Parse.Cloud.job("getAccountsForCustomer", function(request, response) {
     var customer_id = request.params.customer_id;
     var apiUrl = 'http://api.reimaginebanking.com/customers/' + customer_id + "/accounts"
@@ -22,8 +22,10 @@ Parse.Cloud.job("getAccountsForCustomer", function(request, response) {
       console.error('Request failed with response code ' + httpResponse.status);
     });
 });
+*/
 
-Parse.Cloud.define("getPurchasesForAccount", function(request, response) {
+
+Parse.Cloud.define("getPurchasesForUser", function(request, response) {
   var query = new Parse.Query("User");
   query.equalTo("objectId", request.params.object_id);
   query.find({
@@ -61,29 +63,39 @@ Parse.Cloud.define("getPurchasesForAccount", function(request, response) {
 });
 
 Parse.Cloud.define("getTotalSpareChange", function(request, response) {
-  var account_id = request.params.account_id;
+  var query = new Parse.Query("User");
+  query.equalTo("objectId", request.params.object_id);
+  query.find({
+    success: function(results) {
+      var account_id = results[0].get("account_id");
 
-  var apiUrl = 'http://api.reimaginebanking.com/accounts/' + account_id + "/purchases";
-  Parse.Cloud.httpRequest({
-    url: apiUrl,
-    params: {
-      key : nessieKey
+      var apiUrl = 'http://api.reimaginebanking.com/accounts/' + account_id + "/purchases";
+      Parse.Cloud.httpRequest({
+        url: apiUrl,
+        params: {
+          key : nessieKey
+        },
+        success: function(httpResponse) {
+          var purchases = httpResponse.data;
+          var total = 0;
+          for (var i = 0; i < purchases.length; i++) {
+            total += (Math.ceil(purchases[i]["amount"]) - purchases[i]["amount"]);
+          }
+          console.log(total);
+          response.success(roundToTwo(total));
+        },
+        error: function(httpResponse) {
+          // error
+          console.error('Request failed with response code ' + httpResponse.status);
+          response.error(status);
+        }
+      });
     },
-    success: function(httpResponse) {
-      var purchases = httpResponse.data;
-      var total = 0;
-      for (var i = 0; i < purchases.length; i++) {
-        total += (Math.ceil(purchases[i]["amount"]) - purchases[i]["amount"]);
-      }
-      console.log(total);
-      response.success(roundToTwo(total));
-    },
-    error: function(httpResponse) {
-      // error
-      console.error('Request failed with response code ' + httpResponse.status);
-      response.error(status);
+    error: function() {
+      response.error("Account lookup failed");
     }
   });
+
 });
 
 
