@@ -62,7 +62,7 @@ Parse.Cloud.define("getPurchasesForUser", function(request, response) {
   
 });
 
-Parse.Cloud.define("getTotalSpareChange", function(request, response) {
+Parse.Cloud.define("getTotalSpendingChange", function(request, response) {
   var query = new Parse.Query("User");
   query.equalTo("objectId", request.params.object_id);
   query.find({
