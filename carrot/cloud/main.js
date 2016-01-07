@@ -88,7 +88,7 @@ Parse.Cloud.define("getTotalSpendingChange", function(request, response) {
           data["total_spending"] = roundToTwo(totalSpending);
           data["total_change"] = roundToTwo(totalChange);
           console.log(data);
-          response.success(data);
+          response.success(JSON.stringify(data));
         },
         error: function(httpResponse) {
           // error
@@ -123,7 +123,9 @@ Parse.Cloud.define("getMostRecentSpareChange", function(request, response) {
           purchases.sort(dateSort);
           console.log(purchases);
           var change = (Math.ceil(purchases[0]["amount"]) - purchases[0]["amount"])
-          response.success(roundToTwo(change));
+          var data = {};
+          data["recent_change"] = roundToTwo(change);
+          response.success(JSON.stringify(data));
         },
         error: function(httpResponse) {
           // error
@@ -179,7 +181,7 @@ Parse.Cloud.define("processPurchases", function(request, response) {
             topThree[keysSorted[i]] = getAverage(transactionPrices[keysSorted[i]]);
             console.log("top three" + i + ": " + topThree);      
           }
-          response.success(topThree);
+          response.success(JSON.stringify(topThree));
         },
         error: function(httpResponse) {
           // error
