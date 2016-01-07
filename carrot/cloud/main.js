@@ -77,12 +77,17 @@ Parse.Cloud.define("getTotalSpareChange", function(request, response) {
         },
         success: function(httpResponse) {
           var purchases = httpResponse.data;
-          var total = 0;
+          var totalSpending = 0;
+          var totalChange = 0;
           for (var i = 0; i < purchases.length; i++) {
-            total += (Math.ceil(purchases[i]["amount"]) - purchases[i]["amount"]);
+            totalSpending += purchases[i]["amount"];
+            totalChange += (Math.ceil(purchases[i]["amount"]) - purchases[i]["amount"]);
           }
-          console.log(total);
-          response.success(roundToTwo(total));
+          var data = {};
+          data["total_spending"] = roundToTwo(totalSpending);
+          data["total_change"] = roundToTwo(totalChange);
+          console.log(data);
+          response.success(data);
         },
         error: function(httpResponse) {
           // error
