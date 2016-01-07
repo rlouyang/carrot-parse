@@ -19,5 +19,5 @@ Parse.Cloud.define("getAccounts", function(request, response) {
       // error
       console.error('Request failed with response code ' + httpResponse.status);
     });
-}
+});
 
