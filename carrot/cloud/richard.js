@@ -6,18 +6,26 @@ Parse.Cloud.job("processPurchases", function(request, response) {
   var transactions = getPurchasesForAccount(request.account_id);
   var transactionDict = {};
   for (var i = 0; i < transactions.length; i++) {
-    var merchantId = transactions[i].merchant_id;
-    if (merchantId in transactionDict) {
-      transactionDict[merchantId] += 1;
+    var description = transactions[i].description;
+    if (description in transactionDict) {
+      transactionDict[description] += 1;
+      transactionDict[description + "price"].push(transactions[i].amount);
     }
     else {
-      transactionDict[merchantId] = 1;
+      transactionDict[description] = 1;
+      transactionDict[description + "price"] = [transactions[i].amount];
     }
   };
 
-  keysSorted = Object.keys(transactionDict).sort(function(a,b){return transactionDict[b]-transactionDict[a]})
+  keysSorted = Object.keys(transactionDict).sort(function(a,b){return transactionDict[b]-transactionDict[a]});
 
-  return keysSorted.slice(0, 3);
+  topThree = {};
+
+  for (var i = 0; i < 3; i++) {
+    topThree[transactionDict[keysSorted[i]]] = getAverage(transactionDict[keysSorted[i] + "price"]);
+  }
+
+  return topThree;
 
 });
 
@@ -37,3 +45,12 @@ Parse.Cloud.job("getMerchantNameById", function(request, response) {
   });
 
 });
+
+function getAverage(price_list) {
+  var total = 0;
+  for(var i = 0; i < grades.length; i++) {
+    total += grades[i];
+  }
+  var avg = total / grades.length;
+  return avg;
+}
