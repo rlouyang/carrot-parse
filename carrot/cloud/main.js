@@ -63,7 +63,7 @@ Parse.Cloud.define("getPurchasesforAccount", function(request, response) {
   });
 });
 
-Parse.Cloud.job("getTotalSpareChange", function(request, response) {
+Parse.Cloud.define("getTotalSpareChange", function(request, response) {
   var account_id = request.params.account_id;
 
   var apiUrl = 'http://api.reimaginebanking.com/accounts/' + account_id + "/purchases";
@@ -90,7 +90,16 @@ Parse.Cloud.job("getTotalSpareChange", function(request, response) {
 });
 
 
-Parse.Cloud.job("processPurchases", function(request, response) {
+function getAverage(price_list) {
+  var total = 0;
+  for(var i = 0; i < grades.length; i++) {
+    total += grades[i];
+  }
+  var avg = total / grades.length;
+  return avg;
+}
+
+Parse.Cloud.define("processPurchases", function(request, response) {
   var account_id = request.params.account_id;
 
   var apiUrl = 'http://api.reimaginebanking.com/accounts/' + account_id + "/purchases";
@@ -156,14 +165,7 @@ Parse.Cloud.job("getMerchantNameById", function(request, response) {
 
 
 
-function getAverage(price_list) {
-  var total = 0;
-  for(var i = 0; i < grades.length; i++) {
-    total += grades[i];
-  }
-  var avg = total / grades.length;
-  return avg;
-}
+
 
 
 
