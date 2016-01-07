@@ -26,7 +26,7 @@ Parse.Cloud.job("getAccountsForCustomer", function(request, response) {
     });
 });
 
-Parse.Cloud.job("getPurchasesforAccount", function(request, response) {
+Parse.Cloud.define("getPurchasesforAccount", function(request, response) {
     var account_id = request.params.account_id;
     var apiUrl = 'http://api.reimaginebanking.com/accounts/' + account_id + "/purchases"
     Parse.Cloud.httpRequest({
@@ -36,7 +36,7 @@ Parse.Cloud.job("getPurchasesforAccount", function(request, response) {
       }
     }).then(function(httpResponse) {
       // success
-      console.log(httpResponse.body);
+      console.log(httpResponse.text);
       return httpResponse.body;
     },function(httpResponse) {
       // error
@@ -44,3 +44,56 @@ Parse.Cloud.job("getPurchasesforAccount", function(request, response) {
       return httpResponse.status;
     });
 });
+
+
+
+Parse.Cloud.job("getTotalSpareChange", function(request, response) {
+    var account_id = request.params.account_id;
+    var purchases = getPurchasesforAccount(account_id);
+    console.log(account_id);
+    console.log(typeof purchases);
+    console.log(purchases);
+    console.log(purchases.length);
+
+    var total = 0;
+    // for (var i = 0; i < purchases.length; i++) {
+    //   if(purchases[i].status == "executed" && purchases[i].medium == "balance"){
+    //     total += (Math.ceil(purchases[i].amount) - purchases[i].amount);
+    //   }
+    // }
+    // console.log(total);
+    return total;
+});
+
+Parse.Cloud.job("getMostRecentSpareChange", function(request, response) {
+    var account_id = request.params.account_id;
+    var purchases = getPurchasesforAccount(account_id);
+    var total = 0;
+    for (var i = 0; i < purchases.length; i++) {
+      if(purchases[i].status == "executed" && purchases[i].medium == "balance"){
+        total += (Math.ceil(purchases[i].amount) - purchases[i].amount);
+      }
+    }
+    console.log(total);
+    return total;
+});
+
+
+
+function getPurchasesforAccount(account_id){
+    var apiUrl = 'http://api.reimaginebanking.com/accounts/' + account_id + "/purchases"
+    Parse.Cloud.httpRequest({
+      url: apiUrl,
+      params: {
+        key : nessieKey
+      }
+    }).then(function(httpResponse) {
+      // success
+      console.log(httpResponse.text);
+      return httpResponse.data;
+    },function(httpResponse) {
+      // error
+      console.error('Request failed with response code ' + httpResponse.status);
+      return httpResponse.status;
+    });
+}
