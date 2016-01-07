@@ -37,11 +37,11 @@ Parse.Cloud.define("getPurchasesforAccount", function(request, response) {
     }).then(function(httpResponse) {
       // success
       console.log(httpResponse.text);
-      return httpResponse.body;
+      response.success(httpResponse.data);
     },function(httpResponse) {
       // error
       console.error('Request failed with response code ' + httpResponse.status);
-      return httpResponse.status;
+      response.error(httpResponse.status);
     });
 });
 
@@ -70,6 +70,91 @@ Parse.Cloud.job("getTotalSpareChange", function(request, response) {
       }
     });
 });
+
+
+Parse.Cloud.job("processPurchases", function(request, response) {
+  var account_id = request.params.account_id;
+
+  var apiUrl = 'http://api.reimaginebanking.com/accounts/' + account_id + "/purchases";
+  Parse.Cloud.httpRequest({
+    url: apiUrl,
+    params: {
+      key : nessieKey
+    },
+    success: function(httpResponse) {
+      var transactions = httpResponse.data;
+      var transactionDict = {};
+      for (var i = 0; i < transactions.length; i++) {
+        var description = transactions[i].description;
+        if (description in transactionDict) {
+          transactionDict[description] += 1;
+          transactionDict[description + "price"].push(transactions[i].amount);
+        }
+        else {
+          transactionDict[description] = 1;
+          transactionDict[description + "price"] = [transactions[i].amount];
+        }
+      };
+
+      keysSorted = Object.keys(transactionDict).sort(function(a,b){return transactionDict[b]-transactionDict[a]});
+
+      topThree = {};
+
+      for (var i = 0; i < 3; i++) {
+        topThree[transactionDict[keysSorted[i]]] = getAverage(transactionDict[keysSorted[i] + "price"]);
+      }
+
+      response.success(topThree);
+    },
+    error: function(httpResponse) {
+      // error
+      console.error('Request failed with response code ' + httpResponse.status);
+      response.error(status);
+    }
+  });
+
+});
+
+
+
+Parse.Cloud.job("getMerchantNameById", function(request, response) {
+  Parse.Cloud.httpRequest({
+    url: 'http://api.reimaginebanking.com/merchants/' + request.merchant_id,
+    params: {
+      key : 'd050a1874e89b27881665db1d0352daa'
+    }
+  }).then(function(httpResponse) {
+    // success
+    console.log(httpResponse.text);
+    response.success(httpResponse.data["amount"]);
+
+    return httpResponse.name;
+  },function(httpResponse) {
+    // error
+    console.error('Request failed with response code ' + httpResponse.status);
+  });
+
+});
+
+
+
+function getAverage(price_list) {
+  var total = 0;
+  for(var i = 0; i < grades.length; i++) {
+    total += grades[i];
+  }
+  var avg = total / grades.length;
+  return avg;
+}
+
+
+
+
+
+
+
+
+
 
 
 
