@@ -123,10 +123,10 @@ Parse.Cloud.define("getMostRecentSpareChange", function(request, response) {
 
 function getAverage(price_list) {
   var total = 0;
-  for(var i = 0; i < grades.length; i++) {
-    total += grades[i];
+  for(var i = 0; i < price_list.length; i++) {
+    total += price_list[i];
   }
-  var avg = total / grades.length;
+  var avg = total / price_list.length;
   return avg;
 }
 
@@ -142,24 +142,24 @@ Parse.Cloud.define("processPurchases", function(request, response) {
     success: function(httpResponse) {
       var transactions = httpResponse.data;
       var transactionDict = {};
+      var transactionPrices = {};
       for (var i = 0; i < transactions.length; i++) {
         var description = transactions[i].description;
         if (description in transactionDict) {
           transactionDict[description] += 1;
-          transactionDict[description + "price"].push(transactions[i].amount);
+          transactionPrices[description].push(transactions[i].amount);
         }
         else {
           transactionDict[description] = 1;
-          transactionDict[description + "price"] = [transactions[i].amount];
+          transactionPrices[description] = [transactions[i].amount];
         }
       };
-
+      console.log(transactionDict);
       keysSorted = Object.keys(transactionDict).sort(function(a,b){return transactionDict[b]-transactionDict[a]});
 
       topThree = {};
-
       for (var i = 0; i < 3; i++) {
-        topThree[transactionDict[keysSorted[i]]] = getAverage(transactionDict[keysSorted[i] + "price"]);
+        topThree[transactionDict[keysSorted[i]]] = getAverage(transactionPrices[keysSorted[i]]);
       }
 
       response.success(topThree);
