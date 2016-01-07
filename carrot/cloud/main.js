@@ -1,7 +1,6 @@
 //customer_id = 56241a13de4bf40b1711222c
 //account_id = 56241a14de4bf40b17112eae
-var nessieKey = 'd050a1874e89b27881665db1d0352daa';
-var nessieKey2 = '93da98350c71eb1daca8329c990c50e0';
+var nessieKey = '93da98350c71eb1daca8329c990c50e0';
 
 
 // Use Parse.Cloud.define to define as many cloud functions as you want.
@@ -25,45 +24,40 @@ Parse.Cloud.job("getAccountsForCustomer", function(request, response) {
 });
 
 Parse.Cloud.define("getPurchasesForAccount", function(request, response) {
-  // var account_id = request.params.account_id;
-  // var apiUrl = 'http://api.reimaginebanking.com/accounts/' + account_id + "/purchases"
-  // Parse.Cloud.httpRequest({
-  //   url: apiUrl,
-  //   params: {
-  //     key : nessieKey
-  //   }
-  // }).then(function(httpResponse) {
-  //   // success
-  //   console.log(httpResponse.text);
-  //   response.success(httpResponse.data);
-  // },function(httpResponse) {
-  //   // error
-  //   console.error('Request failed with response code ' + httpResponse.status);
-  //   response.error(httpResponse.status);
-  // });
-  var account_id = request.params.account_id;
+  var query = new Parse.Query("User");
+  query.equalTo("objectId", request.params.object_id);
+  query.find({
+    success: function(results) {
+      var account_id = results[0].get("account_id");
 
-  var apiUrl = 'http://api.reimaginebanking.com/accounts/' + account_id + "/purchases";
-  Parse.Cloud.httpRequest({
-    url: apiUrl,
-    params: {
-      key : nessieKey
+      var apiUrl = 'http://api.reimaginebanking.com/accounts/' + account_id + "/purchases";
+      Parse.Cloud.httpRequest({
+        url: apiUrl,
+        params: {
+          key : nessieKey
+        },
+        success: function(httpResponse) {
+          console.log(httpResponse.text);
+          var purchases = httpResponse.data
+          for(var i = 0; i < purchases.length; i++){
+            var change = (Math.ceil(purchases[i]["amount"]) - purchases[i]["amount"]);
+            purchases[i]["change"] = change;
+          }
+          response.success(purchases);
+        },
+        error: function(httpResponse) {
+          // error
+          console.error('Request failed with response code ' + httpResponse.status);
+          response.error(status);
+        }
+      });
     },
-    success: function(httpResponse) {
-      console.log(httpResponse.text);
-      var purchases = httpResponse.data
-      for(var i = 0; i < purchases.length; i++){
-        var change = (Math.ceil(purchases[i]["amount"]) - purchases[i]["amount"]);
-        purchases[i]["change"] = change;
-      }
-      response.success(purchases);
-    },
-    error: function(httpResponse) {
-      // error
-      console.error('Request failed with response code ' + httpResponse.status);
-      response.error(status);
+    error: function() {
+      response.error("Account lookup failed");
     }
   });
+
+  
 });
 
 Parse.Cloud.define("getTotalSpareChange", function(request, response) {
@@ -140,7 +134,7 @@ Parse.Cloud.define("processPurchases", function(request, response) {
   Parse.Cloud.httpRequest({
     url: apiUrl,
     params: {
-      key : nessieKey2
+      key : nessieKey
     },
     success: function(httpResponse) {
       var transactions = httpResponse.data;
@@ -178,7 +172,21 @@ Parse.Cloud.define("processPurchases", function(request, response) {
 
 });
 
+Parse.Cloud.define("getAccountByObjectId", function(request, response) {
+  var query = new Parse.Query("User");
+  query.equalTo("objectId", request.params.object_id);
+  query.find({
+    success: function(results) {
+      var account_id = results[0].get("account_id");
 
+      response.success(account_id);
+    },
+    error: function() {
+      response.error("Account lookup failed");
+    }
+  });
+
+});
 
 Parse.Cloud.job("getMerchantNameById", function(request, response) {
   Parse.Cloud.httpRequest({
