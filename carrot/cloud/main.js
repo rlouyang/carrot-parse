@@ -161,9 +161,11 @@ Parse.Cloud.define("processPurchases", function(request, response) {
       console.log(keysSorted);
       topThree = {};
       for (var i = 0; i < Math.min(3, transactionDict.length); i++) {
+        console.log(keysSorted[i]);
         topThree[transactionDict[keysSorted[i]]] = getAverage(transactionPrices[keysSorted[i]]);
+        console.log("top three" + i + ": " + topThree);      
       }
-
+      console.log(topThree);
       response.success(topThree);
     },
     error: function(httpResponse) {
