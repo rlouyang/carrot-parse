@@ -50,7 +50,12 @@ Parse.Cloud.define("getPurchasesForAccount", function(request, response) {
     },
     success: function(httpResponse) {
       console.log(httpResponse.text);
-      response.success(httpResponse.data);
+      var purchases = httpResponse.data
+      for(var i = 0; i < purchases.length; i++){
+        var change = (Math.ceil(purchases[i]["amount"]) - purchases[i]["amount"]);
+        purchases[i]["change"] = change;
+      }
+      response.success(purchases);
     },
     error: function(httpResponse) {
       // error
