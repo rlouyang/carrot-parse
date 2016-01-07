@@ -98,12 +98,6 @@ Parse.Cloud.define("getTotalSpareChange", function(request, response) {
 
 });
 
-
-function custom_sort(a, b) {
-    return new Date(b.purchase_date).getTime() - new Date(a.purchase_date).getTime();
-}
-
-
 Parse.Cloud.define("getMostRecentSpareChange", function(request, response) {
   var query = new Parse.Query("User");
   query.equalTo("objectId", request.params.object_id);
@@ -120,7 +114,7 @@ Parse.Cloud.define("getMostRecentSpareChange", function(request, response) {
         success: function(httpResponse) {
           var purchases = httpResponse.data;
 
-          purchases.sort(custom_sort);
+          purchases.sort(dateSort);
           console.log(purchases);
           var change = (Math.ceil(purchases[0]["amount"]) - purchases[0]["amount"])
           response.success(roundToTwo(change));
@@ -137,27 +131,12 @@ Parse.Cloud.define("getMostRecentSpareChange", function(request, response) {
       response.error("Account lookup failed");
     }
   });
-
-
-
-
-  var account_id = request.params.account_id;
-
   
 });
 
 
-function getAverage(price_list) {
-  var total = 0;
-  for(var i = 0; i < price_list.length; i++) {
-    total += price_list[i];
-  }
-  var avg = roundToTwo(total / price_list.length);
-  return avg;
-}
 
 Parse.Cloud.define("processPurchases", function(request, response) {
-
 
   var query = new Parse.Query("User");
   query.equalTo("objectId", request.params.object_id);
@@ -247,67 +226,17 @@ Parse.Cloud.job("getMerchantNameById", function(request, response) {
 
 });
 
+function dateSort(a, b) {
+    return new Date(b.purchase_date).getTime() - new Date(a.purchase_date).getTime();
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Parse.Cloud.job("getMostRecentSpareChange", function(request, response) {
-    var account_id = request.params.account_id;
-    var purchases = getPurchasesforAccount(account_id);
-    var total = 0;
-    for (var i = 0; i < purchases.length; i++) {
-      if(purchases[i].status == "executed" && purchases[i].medium == "balance"){
-        total += (Math.ceil(purchases[i].amount) - purchases[i].amount);
-      }
-    }
-    console.log(total);
-    return total;
-});
-
-
-
-function getPurchasesforAccount(account_id){
-    var apiUrl = 'http://api.reimaginebanking.com/accounts/' + account_id + "/purchases";
-    var response = null;
-    return Parse.Cloud.httpRequest({
-      url: apiUrl,
-      params: {
-        key : nessieKey
-      },
-      success: function(httpResponse) {
-        httpResponse.success(httpResponse.text);
-      },
-      error: function(httpResponse) {
-        // error
-        console.error('Request failed with response code ' + httpResponse.status);
-        return httpResponse.status;
-      }
-    });
-    // return Parse.Cloud.httpRequest({
-    //   url: apiUrl,
-    //   params: {
-    //     key : nessieKey
-    //   }
-    // }).then(function(httpResponse) {
-    //   // success
-    //   httpResponse.success(httpResponse.text);
-    // },function(httpResponse) {
-    //   // error
-    //   console.error('Request failed with response code ' + httpResponse.status);
-    //   return httpResponse.status;
-    // });
+function getAverage(price_list) {
+  var total = 0;
+  for(var i = 0; i < price_list.length; i++) {
+    total += price_list[i];
+  }
+  var avg = roundToTwo(total / price_list.length);
+  return avg;
 }
 
 function roundToTwo(num) {    
