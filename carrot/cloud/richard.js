@@ -35,7 +35,7 @@ Parse.Cloud.define("processPurchases", function(request, response) {
           transactionPrices[description] = [transactions[i].amount];
         }
       };
-      console.log(transactionDict);
+
       keysSorted = Object.keys(transactionDict).sort(function(a,b){return transactionDict[b]-transactionDict[a]});
 
       topThree = {};

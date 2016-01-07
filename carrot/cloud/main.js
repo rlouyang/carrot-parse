@@ -1,6 +1,7 @@
 //customer_id = 56241a13de4bf40b1711222c
 //account_id = 56241a14de4bf40b17112eae
 var nessieKey = 'd050a1874e89b27881665db1d0352daa';
+var nessieKey2 = '93da98350c71eb1daca8329c990c50e0';
 
 
 // Use Parse.Cloud.define to define as many cloud functions as you want.
@@ -81,7 +82,7 @@ Parse.Cloud.define("getTotalSpareChange", function(request, response) {
         total += (Math.ceil(purchases[i]["amount"]) - purchases[i]["amount"]);
       }
       console.log(total);
-      response.success(Math.round10(total, -2));
+      response.success(roundToTwo(total));
     },
     error: function(httpResponse) {
       // error
@@ -128,9 +129,10 @@ function getAverage(price_list) {
   for(var i = 0; i < price_list.length; i++) {
     total += price_list[i];
   }
-  var avg = total / price_list.length;
+  var avg = roundToTwo(total / price_list.length);
   return avg;
 }
+
 
 Parse.Cloud.define("processPurchases", function(request, response) {
   var account_id = request.params.account_id;
@@ -139,7 +141,7 @@ Parse.Cloud.define("processPurchases", function(request, response) {
   Parse.Cloud.httpRequest({
     url: apiUrl,
     params: {
-      key : nessieKey
+      key : nessieKey2
     },
     success: function(httpResponse) {
       var transactions = httpResponse.data;
@@ -259,4 +261,8 @@ function getPurchasesforAccount(account_id){
     //   console.error('Request failed with response code ' + httpResponse.status);
     //   return httpResponse.status;
     // });
+}
+
+function roundToTwo(num) {    
+    return +(Math.round(num + "e+2")  + "e-2");
 }
