@@ -1,0 +1,10 @@
+{
+  "applications": {
+    "Carrot": {
+      "applicationId": "eOmm9JsyBBlGo0sCCmr5ga5W7Rx1i1dZkbPsUhzq"
+    },
+    "_default": {
+      "link": "Carrot"
+    }
+  }
+}
