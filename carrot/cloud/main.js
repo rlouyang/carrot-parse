@@ -45,7 +45,8 @@ Parse.Cloud.define("getPurchasesForUser", function(request, response) {
             var change = (Math.ceil(purchases[i]["amount"]) - purchases[i]["amount"]);
             purchases[i]["change"] = change;
           }
-          response.success(purchases);
+          console.log(purchases);
+          response.success(JSON.stringify(purchases));
         },
         error: function(httpResponse) {
           // error
@@ -202,7 +203,6 @@ Parse.Cloud.define("getAccountByObjectId", function(request, response) {
       response.error("Account lookup failed");
     }
   });
-
 });
 
 Parse.Cloud.job("getMerchantNameById", function(request, response) {
@@ -223,6 +223,8 @@ Parse.Cloud.job("getMerchantNameById", function(request, response) {
   });
 
 });
+
+// helper functions
 
 function dateSort(a, b) {
     return new Date(b.purchase_date).getTime() - new Date(a.purchase_date).getTime();
