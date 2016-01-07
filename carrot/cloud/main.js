@@ -5,9 +5,6 @@ var nessieKey = 'd050a1874e89b27881665db1d0352daa';
 
 // Use Parse.Cloud.define to define as many cloud functions as you want.
 // For example:
-Parse.Cloud.job("hello", function(request, response) {
-  console.log("Hello world!lslofkajhlsfkjahlsdkjfh");
-});
 
 Parse.Cloud.job("getAccountsForCustomer", function(request, response) {
     var customer_id = request.params.customer_id;
@@ -127,6 +124,7 @@ function getAverage(price_list) {
     total += price_list[i];
   }
   var avg = total / price_list.length;
+  console.log(avg);
   return avg;
 }
 
@@ -154,18 +152,16 @@ Parse.Cloud.define("processPurchases", function(request, response) {
           transactionPrices[description] = [transactions[i].amount];
         }
       };
-      console.log(transactionDict);
-      console.log(transactionPrices);
+      
 
       keysSorted = Object.keys(transactionDict).sort(function(a,b){return transactionDict[b]-transactionDict[a]});
-      console.log(keysSorted);
+
       topThree = {};
       for (var i = 0; i < Math.min(3, transactionDict.length); i++) {
         console.log(keysSorted[i]);
         topThree[transactionDict[keysSorted[i]]] = getAverage(transactionPrices[keysSorted[i]]);
         console.log("top three" + i + ": " + topThree);      
       }
-      console.log(topThree);
       response.success(topThree);
     },
     error: function(httpResponse) {
