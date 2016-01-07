@@ -105,28 +105,45 @@ function custom_sort(a, b) {
 
 
 Parse.Cloud.define("getMostRecentSpareChange", function(request, response) {
-  var account_id = request.params.account_id;
+  var query = new Parse.Query("User");
+  query.equalTo("objectId", request.params.object_id);
+  query.find({
+    success: function(results) {
+      var account_id = results[0].get("account_id");
 
-  var apiUrl = 'http://api.reimaginebanking.com/accounts/' + account_id + "/purchases";
-  Parse.Cloud.httpRequest({
-    url: apiUrl,
-    params: {
-      key : nessieKey
-    },
-    success: function(httpResponse) {
-      var purchases = httpResponse.data;
+      var apiUrl = 'http://api.reimaginebanking.com/accounts/' + account_id + "/purchases";
+      Parse.Cloud.httpRequest({
+        url: apiUrl,
+        params: {
+          key : nessieKey
+        },
+        success: function(httpResponse) {
+          var purchases = httpResponse.data;
 
-      purchases.sort(custom_sort);
-      console.log(purchases);
-      var change = (Math.ceil(purchases[0]["amount"]) - purchases[0]["amount"])
-      response.success(change);
+          purchases.sort(custom_sort);
+          console.log(purchases);
+          var change = (Math.ceil(purchases[0]["amount"]) - purchases[0]["amount"])
+          response.success(roundToTwo(change));
+        },
+        error: function(httpResponse) {
+          // error
+          console.error('Request failed with response code ' + httpResponse.status);
+          response.error(status);
+        }
+      });
+
     },
-    error: function(httpResponse) {
-      // error
-      console.error('Request failed with response code ' + httpResponse.status);
-      response.error(status);
+    error: function() {
+      response.error("Account lookup failed");
     }
   });
+
+
+
+
+  var account_id = request.params.account_id;
+
+  
 });
 
 
