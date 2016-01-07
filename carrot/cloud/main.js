@@ -123,7 +123,7 @@ function getAverage(price_list) {
   for(var i = 0; i < price_list.length; i++) {
     total += price_list[i];
   }
-  var avg = total / price_list.length;
+  var avg = Math.round10(total / price_list.length, -2);
   return avg;
 }
 
