@@ -113,7 +113,7 @@ Parse.Cloud.define("getMostRecentSpareChange", function(request, response) {
       purchases.sort(custom_sort);
       console.log(purchases);
       var change = (Math.ceil(purchases[0]["amount"]) - purchases[0]["amount"])
-      response.success(purchases[0]);
+      response.success(change);
     },
     error: function(httpResponse) {
       // error
