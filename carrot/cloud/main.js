@@ -45,25 +45,34 @@ Parse.Cloud.define("getPurchasesforAccount", function(request, response) {
     });
 });
 
-
-
 Parse.Cloud.job("getTotalSpareChange", function(request, response) {
     var account_id = request.params.account_id;
-    var purchases = getPurchasesforAccount(account_id);
-    console.log(account_id);
-    console.log(typeof purchases);
-    console.log(purchases);
-    console.log(purchases.length);
 
-    var total = 0;
-    // for (var i = 0; i < purchases.length; i++) {
-    //   if(purchases[i].status == "executed" && purchases[i].medium == "balance"){
-    //     total += (Math.ceil(purchases[i].amount) - purchases[i].amount);
-    //   }
-    // }
-    // console.log(total);
-    return total;
+    var apiUrl = 'http://api.reimaginebanking.com/accounts/' + account_id + "/purchases";
+    Parse.Cloud.httpRequest({
+      url: apiUrl,
+      params: {
+        key : nessieKey
+      },
+      success: function(httpResponse) {
+        var purchases = httpResponse.data;
+        var total = 0;
+        for (var i = 0; i < purchases.length; i++) {
+          total += (Math.ceil(purchases[i]["amount"]) - purchases[i]["amount"]);
+        }
+        console.log(total);
+        response.success(total);
+      },
+      error: function(httpResponse) {
+        // error
+        console.error('Request failed with response code ' + httpResponse.status);
+        response.error(status);
+      }
+    });
 });
+
+
+
 
 Parse.Cloud.job("getMostRecentSpareChange", function(request, response) {
     var account_id = request.params.account_id;
@@ -81,19 +90,33 @@ Parse.Cloud.job("getMostRecentSpareChange", function(request, response) {
 
 
 function getPurchasesforAccount(account_id){
-    var apiUrl = 'http://api.reimaginebanking.com/accounts/' + account_id + "/purchases"
-    Parse.Cloud.httpRequest({
+    var apiUrl = 'http://api.reimaginebanking.com/accounts/' + account_id + "/purchases";
+    var response = null;
+    return Parse.Cloud.httpRequest({
       url: apiUrl,
       params: {
         key : nessieKey
+      },
+      success: function(httpResponse) {
+        httpResponse.success(httpResponse.text);
+      },
+      error: function(httpResponse) {
+        // error
+        console.error('Request failed with response code ' + httpResponse.status);
+        return httpResponse.status;
       }
-    }).then(function(httpResponse) {
-      // success
-      console.log(httpResponse.text);
-      return httpResponse.data;
-    },function(httpResponse) {
-      // error
-      console.error('Request failed with response code ' + httpResponse.status);
-      return httpResponse.status;
     });
+    // return Parse.Cloud.httpRequest({
+    //   url: apiUrl,
+    //   params: {
+    //     key : nessieKey
+    //   }
+    // }).then(function(httpResponse) {
+    //   // success
+    //   httpResponse.success(httpResponse.text);
+    // },function(httpResponse) {
+    //   // error
+    //   console.error('Request failed with response code ' + httpResponse.status);
+    //   return httpResponse.status;
+    // });
 }
