@@ -1,12 +1,12 @@
 
 // Use Parse.Cloud.define to define as many cloud functions as you want.
 // For example:
-Parse.Cloud.define("hello", function(request, response) {
-  response.success("Hello world!lslofkajhlsfkjahlsdkjfh");
+Parse.Cloud.job("hello", function(request, response) {
+  console.log("Hello world!lslofkajhlsfkjahlsdkjfh");
 });
 
 
-Parse.Cloud.define("getAccounts", function(request, response) {
+Parse.Cloud.job("getAccounts", function(request, response) {
     Parse.Cloud.httpRequest({
       url: 'http://api.reimaginebanking.com/accounts',
       params: {
