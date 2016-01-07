@@ -127,6 +127,7 @@ function getAverage(price_list) {
   return avg;
 }
 
+
 Parse.Cloud.define("processPurchases", function(request, response) {
   var account_id = request.params.account_id;
 
