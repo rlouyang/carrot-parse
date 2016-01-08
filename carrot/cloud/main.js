@@ -246,7 +246,7 @@ Parse.Cloud.define("addToCarrot", function(request, response) {
         },
         body: {
           "medium": "balance",
-          "transaction_date": "2016-01-09",
+          "transaction_date": "2016-01-08",
           "status": "pending",
           "amount": 100 * change, // needs to be in cents because of Nessie API. Keep watch for a fix
           "description": "Carrot Savings Deposit"
@@ -299,7 +299,7 @@ Parse.Cloud.define("processNewPurchase", function(request, response) {
         body: {
           "merchant_id": merchant_id,
           "medium": "balance",
-          "purchase_date": "2016-01-09",
+          "purchase_date": "2016-01-08",
           "amount": amount, 
           "status": "pending",
           "description": description 
@@ -320,7 +320,7 @@ Parse.Cloud.define("processNewPurchase", function(request, response) {
             body: {
               "merchant_id": carrotMasterId,
               "medium": "balance",
-              "purchase_date": "2016-01-09",
+              "purchase_date": "2016-01-08",
               "amount": change, 
               "status": "pending",
               "description": "Carrot Savings Charge"
@@ -344,7 +344,7 @@ Parse.Cloud.define("processNewPurchase", function(request, response) {
                 },
                 body: {
                   "medium": "balance",
-                  "transaction_date": "2016-01-09",
+                  "transaction_date": "2016-01-08",
                   "status": "pending",
                   "amount": 100 * change, // needs to be in cents because of Nessie API. Keep watch for a fix
                   "description": "Carrot Savings Deposit"
