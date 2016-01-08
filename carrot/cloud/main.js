@@ -77,6 +77,7 @@ Parse.Cloud.define("getTotalSpendingChange", function(request, response) {
   query.find({
     success: function(results) {
       var account_id = results[0].get("account_id");
+      var carrot_id = results[0].get("carrot_id");
 
       var apiUrl = 'http://api.reimaginebanking.com/accounts/' + account_id + "/purchases";
       Parse.Cloud.httpRequest({
@@ -91,14 +92,32 @@ Parse.Cloud.define("getTotalSpendingChange", function(request, response) {
           for (var i = 0; i < purchases.length; i++) {
             if(purchases[i]["description"] != "string" && purchases[i]["description"] != "Carrot Savings Charge"){
               totalSpending += purchases[i]["amount"];
-              totalChange += (Math.ceil(purchases[i]["amount"]) - purchases[i]["amount"]);
+              // totalChange += (Math.ceil(purchases[i]["amount"]) - purchases[i]["amount"]);
             }
           }
-          var data = {};
-          data["total_spending"] = roundToTwo(totalSpending);
-          data["total_change"] = roundToTwo(totalChange);
-          console.log(data);
-          response.success(JSON.stringify(data));
+
+          //Get balance and total change in carrot savings account
+          apiUrl = 'http://api.reimaginebanking.com/accounts/' + carrot_id
+          Parse.Cloud.httpRequest({
+            url: apiUrl,
+            params: {
+              key : nessieKey
+            },
+            success: function(httpResponse) {
+              var balance = httpResponse.data["balance"];
+              
+              var data = {};
+              data["total_spending"] = roundToTwo(totalSpending);
+              data["total_change"] = roundToTwo(balance);
+              console.log(data);
+              response.success(JSON.stringify(data));
+            },
+            error: function(httpResponse) {
+              // error
+              console.error('Request failed with response code ' + httpResponse.status);
+              response.error(httpResponse.status);
+            }
+          });
         },
         error: function(httpResponse) {
           // error
