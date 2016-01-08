@@ -41,6 +41,7 @@ Parse.Cloud.define("getPurchasesForUser", function(request, response) {
         success: function(httpResponse) {
           console.log(httpResponse.text);
           var purchases = httpResponse.data
+          purchases.sort(dateSort);
           for(var i = 0; i < purchases.length; i++){
             var change = (Math.ceil(purchases[i]["amount"]) - purchases[i]["amount"]);
             purchases[i]["change"] = change;
