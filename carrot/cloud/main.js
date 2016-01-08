@@ -412,21 +412,20 @@ Parse.Cloud.define("getAccountByObjectId", function(request, response) {
   });
 });
 
-Parse.Cloud.job("getMerchantNameById", function(request, response) {
+Parse.Cloud.define("getMerchantNameById", function(request, response) {
+
   Parse.Cloud.httpRequest({
     url: 'http://api.reimaginebanking.com/merchants/' + request.merchant_id,
     params: {
       key : 'd050a1874e89b27881665db1d0352daa'
+    }, 
+    success: function(httpResponse) {
+      response.success(JSON.stringify({"name": httpResponse.name}));
+    },
+    error: function(httpResponse) {
+      console.error('Request failed with response code ' + httpResponse.status);
+      response.error(httpRequest.status);
     }
-  }).then(function(httpResponse) {
-    // success
-    console.log(httpResponse.text);
-    response.success(httpResponse.data["amount"]);
-
-    return httpResponse.name;
-  },function(httpResponse) {
-    // error
-    console.error('Request failed with response code ' + httpResponse.status);
   });
 
 });
