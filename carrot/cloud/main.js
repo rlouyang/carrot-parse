@@ -188,7 +188,7 @@ Parse.Cloud.define("processPurchases", function(request, response) {
           var transactionPrices = {};
           for (var i = 0; i < transactions.length; i++) {
             var description = transactions[i].description;
-            if (transactions[i].amount <= 20 && transactions[i].description != "string") {
+            if (transactions[i].amount <= 20 && transactions[i].description != "string" && transactions[i].amount >= 1) {
               if (description in transactionDict) {
                 transactionDict[description] += 1;
                 transactionPrices[description].push(transactions[i].amount);
