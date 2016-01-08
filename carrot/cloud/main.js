@@ -188,13 +188,15 @@ Parse.Cloud.define("processPurchases", function(request, response) {
           var transactionPrices = {};
           for (var i = 0; i < transactions.length; i++) {
             var description = transactions[i].description;
-            if (description in transactionDict) {
-              transactionDict[description] += 1;
-              transactionPrices[description].push(transactions[i].amount);
-            }
-            else {
-              transactionDict[description] = 1;
-              transactionPrices[description] = [transactions[i].amount];
+            if (transactions[i].amount <= 20 && transactions[i].description != "string") {
+              if (description in transactionDict) {
+                transactionDict[description] += 1;
+                transactionPrices[description].push(transactions[i].amount);
+              }
+              else {
+                transactionDict[description] = 1;
+                transactionPrices[description] = [transactions[i].amount];
+              }
             }
           };
           
