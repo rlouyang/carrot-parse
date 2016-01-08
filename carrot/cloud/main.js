@@ -209,6 +209,7 @@ Parse.Cloud.define("addToCarrot", function(request, response) {
       var carrot_id = results[0].get("carrot_id");
 
       var apiUrl = 'http://api.reimaginebanking.com/accounts/' + carrot_id + "/deposits";
+      console.log(carrot_id);
       Parse.Cloud.httpRequest({
         url: apiUrl,
         params: {
@@ -217,13 +218,13 @@ Parse.Cloud.define("addToCarrot", function(request, response) {
         body: {
           "medium": "balance",
           "transaction_date": "2016-01-08",
-          "status": "completed",
-          "amount": 0.8,
+          "status": "pending",
+          "amount": 80, // needs to be in cents
           "description": "free money"
         },
         success: function(httpResponse) {
           console.log("success! deposited change into carrot!");
-          response.success();
+          response.success("hooray!");
         },
         error: function(httpResponse) {
           // error

@@ -1,4 +1,4 @@
 curl -X POST   -H "X-Parse-Application-Id: eOmm9JsyBBlGo0sCCmr5ga5W7Rx1i1dZkbPsUhzq"   -H "X-Parse-REST-API-Key: MJbGVr8SfrRgdrCAjQ6p1oDrCgLz6qHlgxZMLUnq"   -H "Content-Type: application/json"   -d '{"object_id": "8d3Q1s5TSt"}'     https://api.parse.com/1/functions/getAccountByObjectId
 
 
-curl -X POST   -H "X-Parse-Application-Id: eOmm9JsyBBlGo0sCCmr5ga5W7Rx1i1dZkbPsUhzq"   -H "X-Parse-REST-API-Key: MJbGVr8SfrRgdrCAjQ6p1oDrCgLz6qHlgxZMLUnq"   -H "Content-Type: application/json"   -d '{"object_id": "8d3Q1s5TSt"}'     https://api.parse.com/1/functions/getTotalSpendingChange
+curl -X POST   -H "X-Parse-Application-Id: eOmm9JsyBBlGo0sCCmr5ga5W7Rx1i1dZkbPsUhzq"   -H "X-Parse-REST-API-Key: MJbGVr8SfrRgdrCAjQ6p1oDrCgLz6qHlgxZMLUnq"   -H "Content-Type: application/json"   -d '{"object_id": "8d3Q1s5TSt"}'     https://api.parse.com/1/functions/addToCarrot
