@@ -24,7 +24,6 @@ Parse.Cloud.job("getAccountsForCustomer", function(request, response) {
 });
 */
 
-
 Parse.Cloud.define("getPurchasesForUser", function(request, response) {
   var query = new Parse.Query("User");
   query.equalTo("objectId", request.params.object_id);
@@ -416,7 +415,7 @@ Parse.Cloud.define("getAccountByObjectId", function(request, response) {
 // helper functions
 
 function dateSort(a, b) {
-    return new Date(b.purchase_date).getTime() - new Date(a.purchase_date).getTime();
+  return new Date(b.purchase_date).getTime() - new Date(a.purchase_date).getTime();
 }
 
 function getAverage(price_list) {
@@ -429,5 +428,5 @@ function getAverage(price_list) {
 }
 
 function roundToTwo(num) {    
-    return +(Math.round(num + "e+2")  + "e-2");
+  return +(Math.round(num + "e+2")  + "e-2");
 }
