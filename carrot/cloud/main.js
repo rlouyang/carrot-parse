@@ -345,8 +345,6 @@ Parse.Cloud.define("processNewPurchase", function(request, response) {
             }
           });
 
-
-
         },
         error: function(httpResponse) {
           // error
