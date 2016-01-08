@@ -62,6 +62,9 @@ Parse.Cloud.define("getPurchasesForUser", function(request, response) {
 
 });
 
+
+
+
 Parse.Cloud.define("getTotalSpendingChange", function(request, response) {
   var query = new Parse.Query("User");
   query.equalTo("objectId", request.params.object_id);
@@ -181,6 +184,46 @@ Parse.Cloud.define("processPurchases", function(request, response) {
             console.log("top three" + i + ": " + topThree);      
           }
           response.success(JSON.stringify(topThree));
+        },
+        error: function(httpResponse) {
+          // error
+          console.error('Request failed with response code ' + httpResponse.status);
+          response.error(status);
+        }
+      });
+    },
+    error: function() {
+      response.error("Account lookup failed");
+    }
+  });
+
+});
+
+
+Parse.Cloud.define("addToCarrot", function(request, response) {
+
+  var query = new Parse.Query("User");
+  query.equalTo("objectId", request.params.object_id);
+  query.find({
+    success: function(results) {
+      var carrot_id = results[0].get("carrot_id");
+
+      var apiUrl = 'http://api.reimaginebanking.com/accounts/' + carrot_id + "/deposits";
+      Parse.Cloud.httpRequest({
+        url: apiUrl,
+        params: {
+          key : nessieKey
+        },
+        body: {
+          "medium": "balance",
+          "transaction_date": "2016-01-08",
+          "status": "completed",
+          "amount": 0.8,
+          "description": "free money"
+        },
+        success: function(httpResponse) {
+          console.log("success! deposited change into carrot!");
+          response.success();
         },
         error: function(httpResponse) {
           // error
