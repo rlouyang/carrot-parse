@@ -45,7 +45,7 @@ Parse.Cloud.define("getPurchasesForUser", function(request, response) {
           for(var i = 0; i < purchases.length; i++){
             if(purchases[i]["description"] != "string" && purchases[i]["description"] != "Carrot Savings Charge" && purchases[i]["amount"] <= 20){
               var change = (Math.ceil(purchases[i]["amount"]) - purchases[i]["amount"]);
-              purchases[i]["change"] = change;
+              purchases[i]["change"] = roundToTwo(change);
               data.push(purchases[i]);
             }
             
