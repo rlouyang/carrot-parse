@@ -225,50 +225,6 @@ Parse.Cloud.define("processPurchases", function(request, response) {
   });
 
 });
-/*
-Parse.Cloud.define("addToCarrot", function(request, response) {
-  var query = new Parse.Query("User");
-  var amount = request.params.amount;
-  var change = roundToTwo(Math.ceil(amount) - amount);
-  query.equalTo("objectId", request.params.object_id);
-
-  query.find({
-    success: function(results) {
-      var carrot_id = results[0].get("carrot_id");
-
-      var apiUrl = 'http://api.reimaginebanking.com/accounts/' + carrot_id + "/deposits";
-      console.log(carrot_id);
-
-      Parse.Cloud.httpRequest({
-        url: apiUrl,
-        params: {
-          key : nessieKey
-        },
-        body: {
-          "medium": "balance",
-          "transaction_date": "2016-01-08",
-          "status": "pending",
-          "amount": 100 * change, // needs to be in cents because of Nessie API. Keep watch for a fix
-          "description": "Carrot Savings Deposit"
-        },
-        success: function(httpResponse) {
-          console.log("success! deposited change into carrot!");
-          response.success("hooray! deposited into carrot!");
-        },
-        error: function(httpResponse) {
-          // error
-          console.error('Request failed with response code ' + httpResponse.status);
-          response.error(httpResponse.status);
-        }
-      });
-    },
-    error: function() {
-      response.error("Account lookup failed");
-    }
-  });
-
-});
-*/
 
 // pass in amount and object_id
 Parse.Cloud.define("processNewPurchase", function(request, response) {
