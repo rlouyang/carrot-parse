@@ -182,6 +182,8 @@ Parse.Cloud.define("processPurchases", function(request, response) {
             }
           };
           
+          delete transactionDict["Carrot Savings Charge"];
+          delete transactionPrices["Carrot Savings Charge"];
 
           keysSorted = Object.keys(transactionDict).sort(function(a,b){return transactionDict[b]-transactionDict[a]});
           console.log(transactionDict);
