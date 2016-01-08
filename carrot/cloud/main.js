@@ -42,12 +42,17 @@ Parse.Cloud.define("getPurchasesForUser", function(request, response) {
           console.log(httpResponse.text);
           var purchases = httpResponse.data
           purchases.sort(dateSort);
+          var data = [];
           for(var i = 0; i < purchases.length; i++){
-            var change = (Math.ceil(purchases[i]["amount"]) - purchases[i]["amount"]);
-            purchases[i]["change"] = change;
+            if(purchases[i]["description"] != "string" && purchases[i]["description"] != "Carrot Savings Charge"){
+              var change = (Math.ceil(purchases[i]["amount"]) - purchases[i]["amount"]);
+              purchases[i]["change"] = change;
+              data.push(purchases[i]);
+            }
+            
           }
-          console.log(purchases);
-          response.success(JSON.stringify(purchases));
+          console.log(data);
+          response.success(JSON.stringify(data));
         },
         error: function(httpResponse) {
           // error
@@ -84,8 +89,10 @@ Parse.Cloud.define("getTotalSpendingChange", function(request, response) {
           var totalSpending = 0;
           var totalChange = 0;
           for (var i = 0; i < purchases.length; i++) {
-            totalSpending += purchases[i]["amount"];
-            totalChange += (Math.ceil(purchases[i]["amount"]) - purchases[i]["amount"]);
+            if(purchases[i]["description"] != "string" && purchases[i]["description"] != "Carrot Savings Charge"){
+              totalSpending += purchases[i]["amount"];
+              totalChange += (Math.ceil(purchases[i]["amount"]) - purchases[i]["amount"]);
+            }
           }
           var data = {};
           data["total_spending"] = roundToTwo(totalSpending);
