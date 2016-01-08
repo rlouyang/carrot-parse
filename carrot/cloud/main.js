@@ -60,7 +60,6 @@ Parse.Cloud.define("getPurchasesForUser", function(request, response) {
     }
   });
 
-  
 });
 
 Parse.Cloud.define("getTotalSpendingChange", function(request, response) {
@@ -196,6 +195,7 @@ Parse.Cloud.define("processPurchases", function(request, response) {
   });
 
 });
+
 
 Parse.Cloud.define("getAccountByObjectId", function(request, response) {
   var query = new Parse.Query("User");
